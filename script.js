@@ -1,6 +1,6 @@
 //SKETCH 8
-//COMPLETED BY: your name
-///DATE: 
+//COMPLETED BY: Jason Cao
+///DATE: 11/16/26
 
 nn.on("load", () => {
 
@@ -30,7 +30,7 @@ nn.on("load", () => {
     },
 
     // background color
-
+    background:[211,211,211]
     // background settings
 
   });
@@ -61,11 +61,40 @@ nn.on("load", () => {
   // player sprite
 
   loadSprite(
-    "name",
+    "kat","assets/person,png",
 
     // sprite file
 
-    {
+    { //sprite animation
+    sliceX:4,
+    sliceY:4,
+    anims: {
+      //forward and back don't need to be in quotes
+    forward: {
+    from:0,
+    to:3,
+    speed: 5,
+    loop: true,
+    },
+      "left": {
+      from: 4,
+      to: 7,
+      speed: 10,
+      loop: true,
+      },
+  "right": {
+    from: 8,
+      to: 11,
+        speed: 10,
+          lopp: true,
+  },
+    back: {
+      from: 12,
+      to: 15,
+      speed: 10,
+      loop: true,
+    }
+    }
 
       // sprite animation
 
@@ -89,7 +118,7 @@ nn.on("load", () => {
   // enemy sprite
 
   loadSprite(
-    "name",
+    "enemy", "assets/enemy.png"
 
     // enemy file
   );
@@ -97,7 +126,7 @@ nn.on("load", () => {
   // collectible sprite
 
   loadSprite(
-    "name",
+    "chest", "assets/Chest.png"
 
     // collectible file
   );
@@ -107,19 +136,19 @@ nn.on("load", () => {
   // AUDIO ASSETS
 
   loadSound(
-    "name",
+    "sound", "assets/emperor_sound.mp3"
 
     // sound file
   );
 
   loadSound(
-    "name",
+    "dead", "assets/dead_2.mp3"
 
     // sound file
   );
 
   loadMusic(
-    "name",
+    "bgu", "assets/intersteller.mp3"
 
     // music file
   );
@@ -131,6 +160,15 @@ nn.on("load", () => {
   function playSoundEffect () {
 
     // sound logic
+    if(!isPlaying){
+      isPlaying = true;
+    }
+    soundEffect = play("sound", {
+      volume: 0.5,
+    });
+    soundEffect.onEnd(() => {
+      isPlaying = false;
+    })
 
   }
 
@@ -139,6 +177,15 @@ nn.on("load", () => {
   function makePlatform (x, y, w, colorValue) {
 
     add([
+      rect(w, 40),
+      area(),
+      outline(6),
+      pos(x, y),
+      body(),
+      color(colorValue),
+      "platform"
+      
+      
 
       // platform setup
 
@@ -151,6 +198,13 @@ nn.on("load", () => {
   function spawnCollectible () {
 
     add([
+      sprite("chest"),
+      pos(rand(0,width()), rand(0, height())),
+      scale(rand(0.5)),
+      rotate(rand(0,65)),
+      area(),
+      anchor("center"),
+      "chest"
 
       // collectible setup
 
@@ -165,8 +219,18 @@ nn.on("load", () => {
     const enemy = add([
 
       // enemy setup
+      sprite("chicken"),
+      pos(rand(100, width()-100), rand(100, height() - 100)),
+      area(),
+      anchor("center"),
+      "chicken"
 
     ]);
+    wait(rand(3, 30), () => {
+      if(enemy.exist()) {
+        destroy(enemy);
+      }
+    })
 
     // enemy timer
 
@@ -175,9 +239,12 @@ nn.on("load", () => {
 
 
   function spawnEnemyWave () {
+    const amount = randi(2, 5)
 
     // wave logic
-
+    for(let i = 0; i < amount; i++ ){
+      spawnEnemy();
+    }
   }
 
 
@@ -191,13 +258,22 @@ nn.on("load", () => {
     let facing = RIGHT;
 
     const scoreText = add([
-
+      text(gameScore.toString(),
+          {
+        size: 24,
+      }),
+      
+      pos(24, 24),
+      color(BLACK), 
       // score display
 
     ]);
 
     const timer = add([
-
+      text(timeLeft.toFixed(0)),
+      pos(width()-24, 24),
+      anchor("topright"),
+      color(BLACK)
       // timer display
 
     ]);
@@ -205,16 +281,30 @@ nn.on("load", () => {
 
 
     const player = add([
+      sprite("kat"), 
+      pos(center()),
+      anchor("center"),
+      area(),
+      body({
+        jumpForce: JUMP_FORCE,
+      }),
+      doubleJump(),
 
       // player setup
 
     ]);
+    player.play("forward");
 
 
 
     // LEVEL EXIT
 
     const levelExit = add([
+      rect(10, heigh()),
+      pos(width()-10, 0),
+      area(), 
+      color(GREEN),
+      "levelExit"
 
       // exit setup
 
@@ -225,7 +315,7 @@ nn.on("load", () => {
     // PLATFORMS
 
     makePlatform(
-
+      0, height() -24,width(), MAGENTA
       // floor platform
 
     );
@@ -235,6 +325,9 @@ nn.on("load", () => {
     for (let i = 0; i < 5; i++) {
 
       // random platforms
+      makePlatform(rand(0, width() - 250), height() - 150 - (i * 100), 
+                  rand(50, 230), 
+                  rgb(rand(0, 255), 0, rand(0,255)));
 
     }
 
@@ -247,6 +340,7 @@ nn.on("load", () => {
       spawnCollectible();
 
     }
+    loop(5, spawnCollectible);
 
     // collectible loop
 
@@ -255,8 +349,10 @@ nn.on("load", () => {
     // ENEMIES
 
     spawnEnemyWave();
+    loop(15, spawnEnemyWave);
 
     // enemy loop
+
 
 
 
@@ -265,6 +361,10 @@ nn.on("load", () => {
     onButtonDown("moveRight", () => {
 
       // move right
+    player.move(SPEED, 0);
+    facing = RIGHT,
+      playSoundEffect();
+    player.play("right");
 
     });
 
@@ -273,6 +373,10 @@ nn.on("load", () => {
     onButtonDown("moveLeft", () => {
 
       // move left
+          player.move(-SPEED, 0);
+      facing = LEFT;
+      playSoundEffect();
+    player.play("left");
 
     });
 
@@ -281,6 +385,8 @@ nn.on("load", () => {
     onButtonDown("moveUp", () => {
 
       // jump logic
+      player.doubleJump();
+      player.play("forward")
 
     });
 
@@ -289,6 +395,8 @@ nn.on("load", () => {
     onButtonDown("moveDown", () => {
 
       // move down
+      player.move(0, -SPEED);
+      player.play("back")
 
     });
 
@@ -620,3 +728,19 @@ nn.on("load", () => {
   go("level1");
 
 });
+
+onClick("player", (p) => {
+  p.use(sprite("kat"));
+  play("sound");
+  score += 10;
+})
+
+player.onCollide("player", (p) => {
+  const playerPos = p.pos;
+  destroy(p);
+  add({
+    sprite(),
+      pos(playerPos),
+    anchor("center")
+  })
+})
