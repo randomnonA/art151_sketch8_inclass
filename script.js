@@ -76,19 +76,19 @@ nn.on("load", () => {
           speed: 5,
           loop: true,
         },
-        "left": {
+        back: {
           from: 4,
           to: 7,
           speed: 10,
           loop: true,
         },
-        "right": {
+        left: {
           from: 8,
           to: 11,
           speed: 10,
           loop: true,
         },
-        back: {
+        right: {
           from: 12,
           to: 15,
           speed: 10,
@@ -121,7 +121,7 @@ nn.on("load", () => {
 
   // collectible sprite
 
-  loadSprite("chest", "assets/Chest.png", {
+  loadSprite("Chest", "assets/Chest.png", {
   sliceX: 5,
   sliceY: 2,
   anims: {
@@ -185,7 +185,9 @@ nn.on("load", () => {
       area(),
       outline(6),
       pos(x, y),
-      body(),
+      body({
+        isStatic: true
+      }),
       color(colorValue),
       "platform"
 
@@ -202,13 +204,13 @@ nn.on("load", () => {
   function spawnCollectible () {
 
     add([
-      sprite("chest"),
+      sprite("Chest"),
       pos(rand(0, width()), rand(0, height())),
-      scale(rand(0.5)),
+      scale(2),
       rotate(rand(0, 65)),
       area(),
       anchor("center"),
-      "chest"
+      "Chest"
 
       // collectible setup
 
@@ -224,6 +226,7 @@ nn.on("load", () => {
 
       // enemy setup
       sprite("enemy"),
+      scale(2),
       pos(rand(100, width() - 100), rand(100, height() - 100)),
       area(),
       anchor("center"),
@@ -258,6 +261,24 @@ nn.on("load", () => {
   scene("level1", () => {
 
     setGravity(640);
+onLoad(() => {
+
+  // music start
+  bgm = play("bgu", {
+    loop: true,
+    volume: 0.5,
+  })
+
+});
+
+
+
+onKeyPress("space", () => {
+
+  // music toggle
+  bgm.paused = !bgm.paused;
+
+});
 
     let facing = RIGHT;
 
@@ -288,6 +309,7 @@ nn.on("load", () => {
       pos(center()),
       anchor("center"),
       area(),
+      scale(2),
       body({
         jumpForce: JUMP_FORCE,
       }),
@@ -541,6 +563,24 @@ nn.on("load", () => {
     console.log("LEVEL2");
 
     setGravity(640);
+onLoad(() => {
+
+  // music start
+  bgm = play("bgu", {
+    loop: true,
+    volume: 0.5,
+  })
+
+});
+
+
+
+onKeyPress("space", () => {
+
+  // music toggle
+  bgm.paused = !bgm.paused;
+
+});
 
     let facing = RIGHT;
 
@@ -777,7 +817,7 @@ nn.on("load", () => {
 
   // camera follow
   player.onUpdate(() => {
-    getCamPos(player.pos);
+    setCamPos(player.pos);
   })
 
 
@@ -826,7 +866,7 @@ spawnSide = "right";
 scene("win", (finalScore) => {
 
   add([
-    text("You WIN!\nScore:${gameScore}", {
+    text(`You WIN!\nScore: ${gameScore}`, {
       size: 32,
     }),
     pos(center()),
@@ -845,15 +885,11 @@ scene("win", (finalScore) => {
     anchor("center"),
     color(BLACK),
   ]);
-
-  // restart text
-
-
-  onKeyPress("enter", () => {
-    gameScore = 0;
-    timeLeft = 30;
-    go("level1");
-  });
+      onKeyPress("enter", () => {
+      gameScore = 0;
+      timeLeft = 30;
+      go("level1");
+ });
 
 
 
@@ -879,27 +915,15 @@ scene("lose", () => {
 
 
 
-  add([
     onKeyPress("enter", () => {
       gameScore = 0;
       timeLeft = 30;
       go("level1");
 
       // restart text
-    })
-  ]);
-
-
-
-  onKeyPress("enter", () => {
-
-    // reset variables
-
-    // restart game
-
-  });
-
+    });
 });
+
 
 
 
@@ -908,6 +932,10 @@ scene("lose", () => {
 onLoad(() => {
 
   // music start
+  bgm = play("bgu", {
+    loop: true,
+    volume: 0.5,
+  })
 
 });
 
@@ -916,6 +944,7 @@ onLoad(() => {
 onKeyPress("space", () => {
 
   // music toggle
+  bgm.paused = !bgm.paused;
 
 });
 
