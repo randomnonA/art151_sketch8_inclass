@@ -30,7 +30,7 @@ nn.on("load", () => {
     },
 
     // background color
-    background:[211,211,211]
+    background: [211, 211, 211]
     // background settings
 
   });
@@ -61,40 +61,40 @@ nn.on("load", () => {
   // player sprite
 
   loadSprite(
-    "kat","assets/person,png",
+    "kat", "assets/person.png",
 
     // sprite file
 
     { //sprite animation
-    sliceX:4,
-    sliceY:4,
-    anims: {
-      //forward and back don't need to be in quotes
-    forward: {
-    from:0,
-    to:3,
-    speed: 5,
-    loop: true,
-    },
-      "left": {
-      from: 4,
-      to: 7,
-      speed: 10,
-      loop: true,
-      },
-  "right": {
-    from: 8,
-      to: 11,
-        speed: 10,
-          lopp: true,
-  },
-    back: {
-      from: 12,
-      to: 15,
-      speed: 10,
-      loop: true,
-    }
-    }
+      sliceX: 4,
+      sliceY: 4,
+      anims: {
+        //forward and back don't need to be in quotes
+        forward: {
+          from: 0,
+          to: 3,
+          speed: 5,
+          loop: true,
+        },
+        "left": {
+          from: 4,
+          to: 7,
+          speed: 10,
+          loop: true,
+        },
+        "right": {
+          from: 8,
+          to: 11,
+          speed: 10,
+          loop: true,
+        },
+        back: {
+          from: 12,
+          to: 15,
+          speed: 10,
+          loop: true,
+        }
+      }
 
       // sprite animation
 
@@ -103,33 +103,36 @@ nn.on("load", () => {
 
   // idle sprite
 
-  loadSprite(
-    "name",
-
-    // sprite file
-
-    {
-
-      // frame animation
-
-    }
-  );
 
   // enemy sprite
 
-  loadSprite(
-    "enemy", "assets/enemy.png"
-
-    // enemy file
-  );
+  loadSprite("enemy", "assets/enemy.png", {
+  sliceX: 4,
+  sliceY: 2,
+  anims: {
+    idle: {
+      from: 0,
+      to: 1,
+      speed: 5,
+      loop: true,
+    }
+  }
+});
 
   // collectible sprite
 
-  loadSprite(
-    "chest", "assets/Chest.png"
-
-    // collectible file
-  );
+  loadSprite("chest", "assets/Chest.png", {
+  sliceX: 5,
+  sliceY: 2,
+  anims: {
+    idle: {
+      from: 0,
+      to: 9,
+      speed: 5,
+      loop: true,
+    }
+  }
+});
 
 
 
@@ -160,9 +163,9 @@ nn.on("load", () => {
   function playSoundEffect () {
 
     // sound logic
-    if(!isPlaying){
+    if (!isPlaying) {
       isPlaying = true;
-    }
+
     soundEffect = play("sound", {
       volume: 0.5,
     });
@@ -170,6 +173,7 @@ nn.on("load", () => {
       isPlaying = false;
     })
 
+  }
   }
 
 
@@ -184,8 +188,8 @@ nn.on("load", () => {
       body(),
       color(colorValue),
       "platform"
-      
-      
+
+
 
       // platform setup
 
@@ -199,9 +203,9 @@ nn.on("load", () => {
 
     add([
       sprite("chest"),
-      pos(rand(0,width()), rand(0, height())),
+      pos(rand(0, width()), rand(0, height())),
       scale(rand(0.5)),
-      rotate(rand(0,65)),
+      rotate(rand(0, 65)),
       area(),
       anchor("center"),
       "chest"
@@ -219,15 +223,15 @@ nn.on("load", () => {
     const enemy = add([
 
       // enemy setup
-      sprite("chicken"),
-      pos(rand(100, width()-100), rand(100, height() - 100)),
+      sprite("enemy"),
+      pos(rand(100, width() - 100), rand(100, height() - 100)),
       area(),
       anchor("center"),
-      "chicken"
+      "enemy"
 
     ]);
     wait(rand(3, 30), () => {
-      if(enemy.exist()) {
+      if (enemy.exists()) {
         destroy(enemy);
       }
     })
@@ -242,7 +246,7 @@ nn.on("load", () => {
     const amount = randi(2, 5)
 
     // wave logic
-    for(let i = 0; i < amount; i++ ){
+    for (let i = 0; i < amount; i++) {
       spawnEnemy();
     }
   }
@@ -258,20 +262,19 @@ nn.on("load", () => {
     let facing = RIGHT;
 
     const scoreText = add([
-      text(gameScore.toString(),
-          {
+      text(gameScore.toString(), {
         size: 24,
       }),
-      
+
       pos(24, 24),
-      color(BLACK), 
+      color(BLACK),
       // score display
 
     ]);
 
     const timer = add([
       text(timeLeft.toFixed(0)),
-      pos(width()-24, 24),
+      pos(width() - 24, 24),
       anchor("topright"),
       color(BLACK)
       // timer display
@@ -281,7 +284,7 @@ nn.on("load", () => {
 
 
     const player = add([
-      sprite("kat"), 
+      sprite("kat"),
       pos(center()),
       anchor("center"),
       area(),
@@ -300,9 +303,9 @@ nn.on("load", () => {
     // LEVEL EXIT
 
     const levelExit = add([
-      rect(10, heigh()),
-      pos(width()-10, 0),
-      area(), 
+      rect(10, height()),
+      pos(width() - 10, 0),
+      area(),
       color(GREEN),
       "levelExit"
 
@@ -315,7 +318,7 @@ nn.on("load", () => {
     // PLATFORMS
 
     makePlatform(
-      0, height() -24,width(), MAGENTA
+      0, height() - 24, width(), MAGENTA
       // floor platform
 
     );
@@ -325,9 +328,9 @@ nn.on("load", () => {
     for (let i = 0; i < 5; i++) {
 
       // random platforms
-      makePlatform(rand(0, width() - 250), height() - 150 - (i * 100), 
-                  rand(50, 230), 
-                  rgb(rand(0, 255), 0, rand(0,255)));
+      makePlatform(rand(0, width() - 250), height() - 150 - (i * 100),
+        rand(50, 230),
+        rgb(rand(0, 255), 0, rand(0, 255)));
 
     }
 
@@ -361,10 +364,10 @@ nn.on("load", () => {
     onButtonDown("moveRight", () => {
 
       // move right
-    player.move(SPEED, 0);
-    facing = RIGHT,
+      player.move(SPEED, 0);
+      facing = RIGHT;
       playSoundEffect();
-    player.play("right");
+      player.play("right");
 
     });
 
@@ -373,10 +376,10 @@ nn.on("load", () => {
     onButtonDown("moveLeft", () => {
 
       // move left
-          player.move(-SPEED, 0);
+      player.move(-SPEED, 0);
       facing = LEFT;
       playSoundEffect();
-    player.play("left");
+      player.play("left");
 
     });
 
@@ -407,13 +410,24 @@ nn.on("load", () => {
     function shoot () {
 
       add([
+        circle(4),
+        color(BLUE),
+        pos(player.pos),
+        anchor("center"),
+        area(),
+        move(facing, 500),
+        offscreen({
+          destroy: true
+        }),
+        "bullet",
 
         // projectile setup
 
       ]);
 
     }
-
+    onGamepadButtonPress("south", shoot);
+    onKeyPress("f", shoot);
     // shoot controls
 
 
@@ -429,10 +443,19 @@ nn.on("load", () => {
     onUpdate(() => {
 
       // movement logic
+      const moveDir = getGamepadStick("left");
+      if (moveDir.len() > DEADZONE) {
+        player.move(moveDir.scale(SPEED));
+      }
 
       // timer logic
+      timeLeft -= dt();
+      timer.text = timeLeft.toFixed(1);
 
       // win check
+      if (timeLeft <= 0) {
+        go("win");
+      }
 
       // lose check
 
@@ -442,10 +465,13 @@ nn.on("load", () => {
 
     // COLLISIONS
 
-    player.onCollide("collectible", (item) => {
+    player.onCollide("Chest", (item) => {
 
       // collect logic
-
+      destroy(item);
+      play("sound");
+      gameScore++;
+      scoreText.text = gameScore.toString();
     });
 
 
@@ -453,6 +479,7 @@ nn.on("load", () => {
     player.onCollide("enemy", () => {
 
       // lose logic
+      go("lose")
 
     });
 
@@ -461,6 +488,10 @@ nn.on("load", () => {
     onCollide("bullet", "enemy", (bullet, enemy) => {
 
       // projectile collision
+      destroy(bullet);
+      destroy(enemy);
+      gameScore += 5;
+      scoreText.text = gameScore.toString();
 
     });
 
@@ -469,6 +500,11 @@ nn.on("load", () => {
     // TRANSITION EFFECT
 
     const fade = add([
+      rect(width(), height()),
+      pos(0, 0),
+      color(BLACK),
+      opacity(0),
+      fixed(),
 
       // fade overlay
 
@@ -479,6 +515,19 @@ nn.on("load", () => {
     player.onCollide("levelExit", () => {
 
       // level transition
+      tween(
+        0,
+        1,
+        0.5,
+        (value) => {
+          fade.opacity = value;
+        },
+        easings.linear);
+      wait(0.5, () => {
+        spawnSide = "left";
+        go("level2")
+      });
+
 
     });
 
@@ -489,6 +538,7 @@ nn.on("load", () => {
   // LVL 2 SCENE
 
   scene("level2", () => {
+    console.log("LEVEL2");
 
     setGravity(640);
 
@@ -496,7 +546,15 @@ nn.on("load", () => {
 
 
 
+
+
     const scoreText = add([
+      text(gameScore.toString(), {
+        size: 24,
+      }),
+      pos(24, 24),
+      color(BLACK),
+      fixed(),
 
       // score display
 
@@ -505,6 +563,11 @@ nn.on("load", () => {
 
 
     const timer = add([
+      text(timeLeft.toFixed(1)),
+      pos(width() - 24, 24),
+      anchor("topright"),
+      color(BLACK),
+      fixed(),
 
       // timer display
 
@@ -513,14 +576,29 @@ nn.on("load", () => {
 
 
     const player = add([
+      sprite('kat'),
+      pos(spawnSide === "left" ? 150 : width() - 150,
+        height() / 2),
+      anchor("center"),
+      area(),
+      body({
+        jumpForce: JUMP_FORCE,
+      }),
+      doubleJump(),
 
       // player setup
 
     ]);
+    player.play("forward");
 
 
 
     const returnExit = add([
+      rect(10, height()),
+      pos(0, 0),
+      area(),
+      color(MAGENTA),
+      "returnExit",
 
       // return exit
 
@@ -531,11 +609,23 @@ nn.on("load", () => {
     // PLATFORMS
 
     makePlatform(
+      0,
+      height() - 24,
+      width(),
+      GREEN
+
 
       // floor platform
 
     );
+    for (let i = 0; i < 5; i++) {
 
+      // random platforms
+      makePlatform(rand(0, width() - 250), height() - 150 - (i * 100),
+        rand(50, 230),
+        rgb(rand(0, 255), 0, rand(0, 255))
+      );
+    }
 
 
     // random platforms
@@ -545,6 +635,9 @@ nn.on("load", () => {
     // ENEMIES
 
     spawnEnemyWave();
+    loop(20, () => {
+      spawnEnemyWave();
+    })
 
 
 
@@ -554,7 +647,12 @@ nn.on("load", () => {
 
     // COLLECTIBLES
 
-    spawnCollectible();
+    for (let i = 0; i < 5; i++) {
+
+      spawnCollectible();
+
+    }
+    loop(5, spawnCollectible);
 
 
 
@@ -563,6 +661,47 @@ nn.on("load", () => {
 
 
     // CONTROLS
+    onButtonDown("moveRight", () => {
+
+      // move right
+      player.move(SPEED, 0);
+      facing = RIGHT;
+      playSoundEffect();
+      player.play("right");
+
+    });
+
+
+
+    onButtonDown("moveLeft", () => {
+
+      // move left
+      player.move(-SPEED, 0);
+      facing = LEFT;
+      playSoundEffect();
+      player.play("left");
+
+    });
+
+
+
+    onButtonDown("moveUp", () => {
+
+      // jump logic
+      player.doubleJump();
+      player.play("forward")
+
+    });
+
+
+
+    onButtonDown("moveDown", () => {
+
+      // move down
+      player.move(0, -SPEED);
+      player.play("back")
+
+    });
 
     // movement controls
 
@@ -573,57 +712,94 @@ nn.on("load", () => {
     function shoot () {
 
       add([
+        circle(4),
+        color(BLUE),
+        pos(player.pos),
+        anchor("center"),
+        area(),
+        move(facing, 500),
+        offscreen({
+          destroy: true
+        }),
+        "bullet",
 
         // projectile setup
 
       ]);
 
     }
+    onGamepadButtonPress("south", shoot);
+    onKeyPress("f", shoot);
+
+    // projectile setup
 
 
 
-    // COLLISIONS
-
-    player.onCollide("collectible", (item) => {
-
-      // collect logic
-
-    });
 
 
+  // COLLISIONS
 
-    player.onCollide("enemy", () => {
+  player.onCollide("Chest", (item) => {
 
-      // lose logic
-
-    });
+    // collect logic
+    destroy(item);
+    play("sound");
+    gameScore++;
+    scoreText.text = gameScore.toString();
+  });
 
 
 
-    onCollide("bullet", "enemy", (bullet, enemy) => {
+  player.onCollide("enemy", () => {
 
-      // projectile collision
+    // lose logic
+    go("lose")
 
-    });
-
-
-
-    // CAMERA
-    // camera scale
-
-    // camera follow
+  });
 
 
 
-    // TIMER + ANALOG MOVEMENT
+  onCollide("bullet", "enemy", (bullet, enemy) => {
 
-    onUpdate(() => {
+    // projectile collision
+    destroy(bullet);
+    destroy(enemy);
+    gameScore += 5;
+    scoreText.text = gameScore.toString();
+
+  });
+
+
+
+  // CAMERA
+  // camera scale
+  setCamScale(1.5);
+
+  // camera follow
+  player.onUpdate(() => {
+    getCamPos(player.pos);
+  })
+
+
+
+  // TIMER + ANALOG MOVEMENT
+
+ onUpdate(() => {
 
       // movement logic
+      const moveDir = getGamepadStick("left");
+      if (moveDir.len() > DEADZONE) {
+        player.move(moveDir.scale(SPEED));
+      }
 
       // timer logic
+      timeLeft -= dt();
+      timer.text = timeLeft.toFixed(1);
 
       // win check
+      if (timeLeft <= 0) {
+        go("win");
+      }
 
       // lose check
 
@@ -631,104 +807,128 @@ nn.on("load", () => {
 
 
 
-    player.onCollide("returnExit", () => {
+  player.onCollide("returnExit", () => {
 
-      // return transition
+    // return transition
+spawnSide = "right";
+    go("level1");
 
-    });
-
-  });
-
-
-
-  // WIN GAME SCENE
-
-  scene("win", () => {
-
-    add([
-
-      // win text
-
-    ]);
-
-
-
-    add([
-
-      // restart text
-
-    ]);
-
-
-
-    onKeyPress("enter", () => {
-
-      // reset variables
-
-      // restart game
-
-    });
-
-  });
-
-
-
-  //LOSE GAME SCENE
-
-  scene("lose", () => {
-
-    add([
-
-      // lose text
-
-    ]);
-
-
-
-    add([
-
-      // restart text
-
-    ]);
-
-
-
-    onKeyPress("enter", () => {
-
-      // reset variables
-
-      // restart game
-
-    });
-
-  });
-
-
-
-  // START MUSIC ONCE LOADED
-
-  onLoad(() => {
-
-    // music start
-
-  });
-
-
-
-  onKeyPress("space", () => {
-
-    // music toggle
-
-  });
-
-
-
-  // RESET GAME 
-
-  go("level1");
+      // return exit
 
 });
 
+});
+
+
+
+// WIN GAME SCENE
+
+scene("win", (finalScore) => {
+
+  add([
+    text("You WIN!\nScore:${gameScore}", {
+      size: 32,
+    }),
+    pos(center()),
+    anchor("center"),
+    color(BLACK)
+
+    // win text
+
+  ]);
+
+
+
+  add([
+    text("Press ENTER to play again"),
+    pos(center().add(0, 120)),
+    anchor("center"),
+    color(BLACK),
+  ]);
+
+  // restart text
+
+
+  onKeyPress("enter", () => {
+    gameScore = 0;
+    timeLeft = 30;
+    go("level1");
+  });
+
+
+
+});
+
+
+
+//LOSE GAME SCENE
+
+scene("lose", () => {
+
+  add([
+    text("YOU LOSE", {
+      size: 48,
+    }),
+    pos(center()),
+    anchor("center"),
+    color(BLACK),
+  ]);
+
+  // lose text
+
+
+
+
+  add([
+    onKeyPress("enter", () => {
+      gameScore = 0;
+      timeLeft = 30;
+      go("level1");
+
+      // restart text
+    })
+  ]);
+
+
+
+  onKeyPress("enter", () => {
+
+    // reset variables
+
+    // restart game
+
+  });
+
+});
+
+
+
+// START MUSIC ONCE LOADED
+
+onLoad(() => {
+
+  // music start
+
+});
+
+
+
+onKeyPress("space", () => {
+
+  // music toggle
+
+});
+
+
+
+// RESET GAME 
+
+go("level1");
+
+});
+
+
+/** 
 onClick("player", (p) => {
   p.use(sprite("kat"));
   play("sound");
@@ -740,7 +940,6 @@ player.onCollide("player", (p) => {
   destroy(p);
   add({
     sprite(),
-      pos(playerPos),
+    pos(playerPos),
     anchor("center")
-  })
-})
+  }) **/
