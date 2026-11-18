@@ -928,7 +928,7 @@ scene("lose", () => {
 
 
 // START MUSIC ONCE LOADED
-
+/**
 onLoad(() => {
 
   // music start
@@ -947,7 +947,7 @@ onKeyPress("space", () => {
   bgm.paused = !bgm.paused;
 
 });
-
+ **/
 
 
 // RESET GAME 
