@@ -260,7 +260,7 @@ nn.on("load", () => {
 
 
   function spawnEnemyWave () {
-    const amount = randi(2, 5)
+    const amount = randi(5, 10)
 
     // wave logic
     for (let i = 0; i < amount; i++) {
@@ -448,7 +448,7 @@ nn.on("load", () => {
     function shoot () {
 
       add([
-        circle(4),
+        circle(10),
         color(BLUE),
         pos(player.pos),
         anchor("center"),
@@ -702,12 +702,12 @@ nn.on("load", () => {
 
     // COLLECTIBLES
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 7; i++) {
 
       spawnCollectible();
 
     }
-    loop(5, spawnCollectible);
+    loop(10, spawnCollectible);
 
 
 
@@ -767,7 +767,7 @@ nn.on("load", () => {
     function shoot () {
 
       add([
-        circle(4),
+        circle(10),
         color(BLUE),
         pos(player.pos),
         anchor("center"),
@@ -821,7 +821,7 @@ nn.on("load", () => {
 
   // CAMERA
   // camera scale
-  setCamScale(1.5);
+  setCamScale(1);
 
   // camera follow
   player.onUpdate(() => {
