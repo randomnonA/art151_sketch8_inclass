@@ -6,6 +6,7 @@ nn.on("load", () => {
 
   // KAPLAY SETUP
 
+
   kaplay({
 
     // button setup
@@ -29,8 +30,10 @@ nn.on("load", () => {
       },
     },
 
-    // background color
-    background: [211, 211, 211]
+    // background color changed with Math.random
+    background: [(Math.random() * 255),(Math.random() * 255),(Math.random() * 255)]
+    
+  
     // background settings
 
   });
@@ -47,7 +50,8 @@ nn.on("load", () => {
   let soundEffect;
   let isPlaying = false;
   let bgm;
-
+  let player;
+  let size;
   let timeLeft = 30;
   let gameScore = 0;
 
@@ -139,7 +143,7 @@ nn.on("load", () => {
   // AUDIO ASSETS
 
   loadSound(
-    "sound", "assets/emperor_sound.mp3"
+    "sound", "assets/step.mp3"
 
     // sound file
   );
@@ -151,10 +155,11 @@ nn.on("load", () => {
   );
 
   loadMusic(
-    "bgu", "assets/intersteller.mp3"
-
+    "bgu", "assets/new.mp3"
+    
     // music file
   );
+  console.log("Music loaded");
 
 
 
@@ -231,9 +236,18 @@ nn.on("load", () => {
       area(),
       anchor("center"),
       "enemy"
-
+      
     ]);
-    wait(rand(3, 30), () => {
+    
+    //updates the enemy to go for the player. If the player passes wave 1, the code checks if there are two players and moves to the one where the player actually exists
+    enemy.onUpdate(() => {
+      if (player && player.exists()){
+        enemy.moveTo(player.pos, 70);
+      }
+    });
+    
+    
+    wait(rand(1, 60), () => {
       if (enemy.exists()) {
         destroy(enemy);
       }
@@ -261,27 +275,8 @@ nn.on("load", () => {
   scene("level1", () => {
 
     setGravity(640);
-onLoad(() => {
-
-  // music start
-  bgm = play("bgu", {
-    loop: true,
-    volume: 0.5,
-  })
-
-});
-
-
-
-onKeyPress("space", () => {
-
-  // music toggle
-  bgm.paused = !bgm.paused;
-
-});
-
     let facing = RIGHT;
-
+    size = 2;
     const scoreText = add([
       text(gameScore.toString(), {
         size: 24,
@@ -304,7 +299,7 @@ onKeyPress("space", () => {
 
 
 
-    const player = add([
+    player = add([
       sprite("kat"),
       pos(center()),
       anchor("center"),
@@ -314,11 +309,33 @@ onKeyPress("space", () => {
         jumpForce: JUMP_FORCE,
       }),
       doubleJump(),
+      health(3), //added 3 things of health so the kat can take 3 hits
 
       // player setup
 
     ]);
     player.play("forward");
+    
+
+  //Used the similar formatting of the chest counter to make a counter for health featuring the sprites hp
+    const hText = add([
+      text("Health: " + player.hp(), {
+        size: 24,
+      }),
+      pos(24, 60),
+      color(BLACK),
+      fixed(),
+    ]);
+    
+    //Added a collision to the enemy sprite where if the player touches it, it gets hurt and loses 1 health. 
+    player.onCollide("enemy", () => {
+      player.hurt(1);
+      hText.text = "Health: " + player.hp();
+      if (player.hp() <= 0) {
+        go("lose");
+      }
+    });
+
 
 
 
@@ -328,7 +345,7 @@ onKeyPress("space", () => {
       rect(10, height()),
       pos(width() - 10, 0),
       area(),
-      color(GREEN),
+      color(BLACK),
       "levelExit"
 
       // exit setup
@@ -339,15 +356,14 @@ onKeyPress("space", () => {
 
     // PLATFORMS
 
-    makePlatform(
-      0, height() - 24, width(), MAGENTA
+    makePlatform(0, height() - 24, width(), MAGENTA
       // floor platform
 
     );
 
 
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 10; i++) {
 
       // random platforms
       makePlatform(rand(0, width() - 250), height() - 150 - (i * 100),
@@ -478,6 +494,9 @@ onKeyPress("space", () => {
       if (timeLeft <= 0) {
         go("win");
       }
+      if (gameScore >= 50) {
+        go("win")
+      }
 
       // lose check
 
@@ -489,21 +508,16 @@ onKeyPress("space", () => {
 
     player.onCollide("Chest", (item) => {
 
-      // collect logic
+      // collect logic added a scale to the player where thye would grow everytime they collected one
       destroy(item);
       play("sound");
       gameScore++;
       scoreText.text = gameScore.toString();
+      size = size * 1.2;
+      player.scaleTo(size);
     });
 
 
-
-    player.onCollide("enemy", () => {
-
-      // lose logic
-      go("lose")
-
-    });
 
 
 
@@ -563,26 +577,8 @@ onKeyPress("space", () => {
     console.log("LEVEL2");
 
     setGravity(640);
-onLoad(() => {
-
-  // music start
-  bgm = play("bgu", {
-    loop: true,
-    volume: 0.5,
-  })
-
-});
-
-
-
-onKeyPress("space", () => {
-
-  // music toggle
-  bgm.paused = !bgm.paused;
-
-});
-
     let facing = RIGHT;
+    size = 2;
 
 
 
@@ -615,21 +611,40 @@ onKeyPress("space", () => {
 
 
 
-    const player = add([
+    player = add([
       sprite('kat'),
       pos(spawnSide === "left" ? 150 : width() - 150,
         height() / 2),
       anchor("center"),
+      scale(2),
       area(),
       body({
         jumpForce: JUMP_FORCE,
       }),
       doubleJump(),
+      health(3),
 
       // player setup
 
     ]);
     player.play("forward");
+    
+    //copied and pasted from scene #1
+    const hText = add([
+      text("Health: " + player.hp(), {
+        size: 24,
+      }),
+      pos(24, 60),
+      color(BLACK),
+      fixed(),
+    ]);
+    player.onCollide("enemy", () => {
+      player.hurt(1);
+      hText.text = "Health: " + player.hp();
+      if (player.hp() <= 0) {
+        go("lose");
+      }
+    });
 
 
 
@@ -652,18 +667,18 @@ onKeyPress("space", () => {
       0,
       height() - 24,
       width(),
-      GREEN
+      rgb(rand(0, 255),rand(0, 255), rand(0, 255))
 
 
       // floor platform
 
     );
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 10; i++) {
 
       // random platforms
       makePlatform(rand(0, width() - 250), height() - 150 - (i * 100),
         rand(50, 230),
-        rgb(rand(0, 255), 0, rand(0, 255))
+        rgb(rand(0, 255), 169, rand(0, 255))
       );
     }
 
@@ -700,7 +715,7 @@ onKeyPress("space", () => {
 
 
 
-    // CONTROLS
+    // CONTROLS MAKE MOVEMENT INVERTED
     onButtonDown("moveRight", () => {
 
       // move right
@@ -778,6 +793,7 @@ onKeyPress("space", () => {
 
 
   // COLLISIONS
+    //did the same thing with the first one
 
   player.onCollide("Chest", (item) => {
 
@@ -786,17 +802,9 @@ onKeyPress("space", () => {
     play("sound");
     gameScore++;
     scoreText.text = gameScore.toString();
+    size = size * 1.2;
+    player.scaleTo(size);
   });
-
-
-
-  player.onCollide("enemy", () => {
-
-    // lose logic
-    go("lose")
-
-  });
-
 
 
   onCollide("bullet", "enemy", (bullet, enemy) => {
@@ -840,6 +848,9 @@ onKeyPress("space", () => {
       if (timeLeft <= 0) {
         go("win");
       }
+   if (gameScore >= 50) {
+     go("win");
+   }
 
       // lose check
 
@@ -947,12 +958,21 @@ onKeyPress("space", () => {
   bgm.paused = !bgm.paused;
 
 });
- **/
+**/
 
 
 // RESET GAME 
 
 go("level1");
+
+
+  // music start
+  bgm = play("bgu", {
+    loop: true,
+    volume: 0.5,
+  })
+
+
 
 });
 
